@@ -37,15 +37,19 @@ close all;
 gam = 1.4; % Specific heat ratio
 R = 287.05; % Specific gas constant for dry air [J/(kg*K)]
 
+% Prompt the user to select the situation
 sys = input(sprintf("Which situation do you want?\n 1: Ramp Angle (theta)\n 2: Shock Angle (beta)\n "));
 
+% Prompt the user for freestream conditions
 h = input("Input Freestream Condition (in meters): ");
 M = input("Input Mach Number: ");
 num_ramps = input("Input Number of Ramps (up to 4): ");
 
+% Arrays for ramp and shock angles
 theta_targets = zeros(1, num_ramps); % Array for ramp angles
 B = zeros(1, num_ramps); % Array for shock angles
 
+% Get ramp or shock angles from the user
 if sys == 1
     for i = 1:num_ramps
         theta_targets(i) = input(sprintf("Input Ramp %d Angle (in degrees): ", i));
@@ -59,8 +63,10 @@ else
     error("Invalid input for situation selection. Choose 1 or 2.");
 end
 
+% Prompt the user for the presence of a normal shock wave
 normal_shock = input("Is there a normal shock wave? (yes=1, no=0): ");
 
+% Calculate air properties at the given altitude using the atmosphere model
 [T, P, a, rho, g] = atmosphere_model1(h);
 M_values = M;
 T_values = T;
@@ -70,7 +76,7 @@ a_values = a;
 V_values = a * M;
 TPR_values = 1;
 
-% Calculate total temperature and total pressure values
+% Calculate total temperature and pressure values
 Pt_values = P * (1 + (gam - 1) / 2 * M^2)^(gam / (gam - 1));
 Tt_values = T * (1 + (gam - 1) / 2 * M^2);
 
@@ -78,6 +84,7 @@ Tt_values = T * (1 + (gam - 1) / 2 * M^2);
 x_coords = [0];
 y_coords = [0];
 
+% Prepare the figure for plotting
 figure;
 hold on;
 switch sys
@@ -86,11 +93,13 @@ switch sys
             B = clac_beta1(theta_targets(i), M_values(end));
             B_values(i) = B;
 
+            % Normal shock Mach number
             M_n1 = M_values(end) * sind(B);
             M_n2 = sqrt((1 + (gam - 1) / 2 * M_n1^2) / (gam * M_n1^2 - (gam - 1) / 2));
             M_next = M_n2 / sind(B - theta_targets(i));
             M_values = [M_values, M_next];
 
+            % Update pressure and temperature values
             Pt = P_values(end) * (1 + (gam - 1) / 2 * M_values(end)^2)^(gam / (gam - 1));
             P_next = P_values(end) * (2 * gam * M_values(end)^2 - (gam - 1)) / (gam + 1);
             Pt_next = P_next * (((1 + ((gam - 1) / 2) * (M_next^2))) ^ (gam / (gam - 1)));
@@ -100,7 +109,7 @@ switch sys
             V_next = a_next * M_next;
             TPR_next = Pt_next / Pt;
 
-            % Update total temperature and total pressure values
+            % Update total temperature and pressure values
             Tt_next = T_next * (1 + (gam - 1) / 2 * M_next^2);
             Pt_values = [Pt_values, Pt_next];
             Tt_values = [Tt_values, Tt_next];
@@ -135,6 +144,7 @@ switch sys
             M_next = M_n2 / sind(B(i) - theta_targets(i));
             M_values = [M_values, M_next];
 
+            % Update pressure and temperature values
             Pt = P_values(end) * (1 + (gam - 1) / 2 * M_values(end)^2)^(gam / (gam - 1));
             P_next = P_values(end) * (2 * gam * M_values(end)^2 - (gam - 1)) / (gam + 1);
             Pt_next = P_next * (((1 + ((gam - 1) / 2) * (M_next^2))) ^ (gam / (gam - 1)));
@@ -144,7 +154,7 @@ switch sys
             V_next = a_next * M_next;
             TPR_next = Pt_next / Pt;
 
-            % Update total temperature and total pressure values
+            % Update total temperature and pressure values
             Tt_next = T_next * (1 + (gam - 1) / 2 * M_next^2);
             Pt_values = [Pt_values, Pt_next];
             Tt_values = [Tt_values, Tt_next];
