@@ -34,6 +34,10 @@ Ramp angles or shock angles
 Presence of a normal shock wave
 Step 2: Calculation and Plotting
 The code calculates the necessary aerodynamic properties and plots the results.
+
+Sample Ramp Geometry and Feature:
 ![image](https://github.com/user-attachments/assets/96d37010-7019-4012-b30b-1db3358e6a0b)
+
+Sample Performance Calculations:
 ![image](https://github.com/user-attachments/assets/c83dd7c0-3686-4559-a70f-0862cb0877b1)
 
