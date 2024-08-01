@@ -1,3 +1,4 @@
+% Function to calculate ramp angle given the shock angle
 function [theta] = calc_theta(beta_target, M)
     gam = 1.4;
 
